@@ -31,7 +31,7 @@ public class Client {
         System.out.println("-------data injection----------");
 
         for (int i = 1; i < data.length ; i++) {
-            int bucket = Hashing.consistentHash(Hashing.md5().hashString("someId"), servers.size());
+            int bucket = Hashing.consistentHash(Hashing.md5().hashString(Character.toString(data[i])), servers.size());
             CacheServiceInterface targetedServer = servers.get(bucket);
             targetedServer.put(i, Character.toString(data[i]));
             System.out.println("server at localhost:300" + bucket + " received value " + data[i] + " for key " + i + "." );
@@ -40,7 +40,7 @@ public class Client {
         System.out.println("-------data retrieval----------");
 
         for (int i = 1; i < data.length ; i++) {
-            int bucket = Hashing.consistentHash(Hashing.md5().hashString("someId"), servers.size());
+            int bucket = Hashing.consistentHash(Hashing.md5().hashString(Character.toString(data[i])), servers.size());
             CacheServiceInterface targetedServer = servers.get(bucket);
             String serverValue = targetedServer.get(i);
             System.out.println("server at localhost:300" + bucket + " contains value " + serverValue + " for key " + i );
