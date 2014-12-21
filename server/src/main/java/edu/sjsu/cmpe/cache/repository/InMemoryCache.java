@@ -21,6 +21,9 @@ public class InMemoryCache implements CacheInterface {
     public Entry save(Entry newEntry) {
         checkNotNull(newEntry, "newEntry instance must not be null");
         inMemoryMap.putIfAbsent(newEntry.getKey(), newEntry);
+		Entry newValue = inMemoryMap.get(newEntry.getKey());
+        System.out.println("insert value is " + newEntry.getValue());
+        System.out.println("cache value is " + newValue.getValue());
 
         return newEntry;
     }
@@ -30,6 +33,12 @@ public class InMemoryCache implements CacheInterface {
         checkArgument(key > 0,
                 "Key was %s but expected greater than zero value", key);
         return inMemoryMap.get(key);
+    }
+
+    @Override
+	public void delete(Long key) {
+        checkArgument(key > 0, "Key was an unexpected value");
+        inMemoryMap.remove(key);
     }
 
     @Override

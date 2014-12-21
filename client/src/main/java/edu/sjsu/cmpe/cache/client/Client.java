@@ -1,53 +1,34 @@
 package edu.sjsu.cmpe.cache.client;
 
+import com.mashape.unirest.http.Unirest;
 
-
-import com.google.common.hash.Hashing;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.*;
 
 public class Client {
 
     public static void main(String[] args) throws Exception {
         System.out.println("Starting Cache Client...");
-//        CacheServiceInterface cache = new DistributedCacheService(
-//                "http://localhost:3000");
+        CRDTClient crdtClient = new CRDTClient();
 
-//        cache.put(1, "foo");
-//        System.out.println("put(1 => foo)");
-
-//        String value = cache.get(1);
-//        System.out.println("get(1) => " + value);
-
-        //Listing all the servers
-        List<CacheServiceInterface> servers = new ArrayList<CacheServiceInterface>();
-        servers.add(new DistributedCacheService("http://localhost:3000"));
-        servers.add(new DistributedCacheService("http://localhost:3001"));
-        servers.add(new DistributedCacheService("http://localhost:3002"));
-
-        char[] data = {' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'};
-
-        System.out.println("-------data injection----------");
-
-        for (int i = 1; i < data.length ; i++) {
-            int bucket = Hashing.consistentHash(Hashing.md5().hashString(Character.toString(data[i])), servers.size());
-            CacheServiceInterface targetedServer = servers.get(bucket);
-            targetedServer.put(i, Character.toString(data[i]));
-            System.out.println("server at localhost:300" + bucket + " received value " + data[i] + " for key " + i + "." );
-        }
-
-        System.out.println("-------data retrieval----------");
-
-        for (int i = 1; i < data.length ; i++) {
-            int bucket = Hashing.consistentHash(Hashing.md5().hashString(Character.toString(data[i])), servers.size());
-            CacheServiceInterface targetedServer = servers.get(bucket);
-            String serverValue = targetedServer.get(i);
-            System.out.println("server at localhost:300" + bucket + " contains value " + serverValue + " for key " + i );
-        }
+        // PUT -> sleep for 30 secs
+        boolean crdtResult = crdtClient.put(1, "a");
+        System.out.println("result is " + crdtResult);
+        Thread.sleep(30*1000);
+        System.out.println("Step 1: put(1 => a); sleeping 30 secs");
 
 
-        System.out.println("Existing Cache Client...");
+        // PUT -> sleep for 30 secs
+        crdtClient.put(1, "b");
+        Thread.sleep(30*1000);
+        System.out.println("Step 2: put(1 => b); sleeping 30s");
+
+
+        // GET call
+        String value = crdtClient.get(1);
+        System.out.println("Step 3: get(1) => " + value);
+
+        System.out.println("Exiting Client...");
+        Unirest.shutdown();
     }
 
 }

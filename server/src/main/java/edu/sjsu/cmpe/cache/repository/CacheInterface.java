@@ -30,11 +30,14 @@ public interface CacheInterface {
      */
     Entry get(Long key);
 
+	void delete(Long key);
+	
     /**
      * Retrieve all entries
      * 
      * @return a list of entries
      */
     List<Entry> getAll();
+	
 
 }
